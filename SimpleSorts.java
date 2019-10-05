@@ -4,9 +4,10 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Random;
 
-public class ThreeSum {
+public class SimpleSorts {
     static ThreadMXBean bean = ManagementFactory.getThreadMXBean( );
 
     /* define constants */
@@ -18,7 +19,7 @@ public class ThreeSum {
     private static int SIZEINCREMENT = 2;
 
     // static int SIZEINCREMENT =  10000000; // not using this since we are doubling the size each time
-    private static String ResultsFolderPath = "/home/zach/Results/"; // pathname to results folder
+    private static String ResultsFolderPath = "/home/zach/Results/lab4/"; // pathname to results folder
     private static FileWriter resultsFile;
     private static PrintWriter resultsWriter;
 
@@ -26,12 +27,26 @@ public class ThreeSum {
 
     public static void main(String args[])
     {
-//        verifyThreeSum();
-//        verifyThreeSumFaster();
-//        verifyThreeSumFastest();
-        runFullExperiment("ThreeSum-lab3-TRASH.txt");
-        runFullExperiment("ThreeSum-lab3-Ex2.txt");
-        runFullExperiment("ThreeSum-lab3-Ex3.txt");
+
+        verifyBubbleSort();
+        verifyInsertionSort();
+//        runFullExperiment("BubbleSort-1-TRASH.txt");
+  //      runFullExperiment("BubbleSort-2.txt");
+    //    runFullExperiment("BubbleSort-3.txt");
+    }
+
+    private static boolean verifySorted(long[] list) {
+        if (list.length == 0 || list.length == 1) {
+            return true;
+        }
+
+        for (int i = 1; i < list.length; i++) {
+            // unsorted pair found
+            if (list[i-1] > list[i])
+                return false;
+        }
+        // no unsorted pair found
+        return true;
     }
 
     private static void runFullExperiment(String resultsFileName) {
@@ -104,11 +119,7 @@ public class ThreeSum {
                 /////////////////////////////////////////
 
 
-                int result = ThreeSum(testList);
-//                int result = ThreeSumFaster(testList);
-//                int result = ThreeSumFastest(testList);
-
-
+                bubbleSort(testList);
 
 
                 ///////////////////////////////////////////
@@ -139,135 +150,80 @@ public class ThreeSum {
         }
     }
 
-    // verification for each of the 3 algorithms, expected results: list 1: 1 sum, list 2: 2 sums
-    static void verifyThreeSum() {
-
-        long[] testList1 = {-2, -4, 6};
-        long[] testList2 = {-2, -4, 6, 14, 2, -7, 11};
-        System.out.println("Verify three sum ********");
-
-        System.out.println("Array 1 : ");
-        printArray(testList1);
-        System.out.println("Array 2 : ");
-        printArray(testList2);
-
-        int sum1 = ThreeSum(testList1);
-        int sum2 = ThreeSum(testList2);
-
-        System.out.println("\nSum Array 1: " + sum1);
-        System.out.println("Sum Array 2: " + sum2);
-
-    }
-
-    static void verifyThreeSumFaster() {
-
-        long[] testList1 = {-2, -4, 6};
-        long[] testList2 = {-2, -4, 6, 14, 2, -7, 11};
-
-        System.out.println("Verify three sum faster ********");
-
-        System.out.println("Array 1 : ");
-        printArray(testList1);
-        System.out.println("Array 2 : ");
-        printArray(testList2);
-
-        int sum1 = ThreeSumFaster(testList1);
-        int sum2 = ThreeSumFaster(testList2);
-
-        System.out.println("\nSum Array 1: " + sum1);
-        System.out.println("Sum Array 2: " + sum2);
-
-    }
-
-    static void verifyThreeSumFastest() {
-
-        long[] testList1 = {-2, -4, 6};
-        long[] testList2 = {-2, -4, 6, 14, 2, -7, 11};
-        System.out.println("Verify three sum fastest ********");
-
-        System.out.println("Array 1 : ");
-        printArray(testList1);
-        System.out.println("Array 2 : ");
-        printArray(testList2);
-
-        int sum1 = ThreeSumFastest(testList1);
-        int sum2 = ThreeSumFastest(testList2);
-
-        System.out.println("\nSum Array 1: " + sum1);
-        System.out.println("Sum Array 2: " + sum2);
-
-    }
-
-
-    private static int ThreeSum(long arr[]) {
-        // iterate over the list 3 times checking each combination of 3 numbers for if they sum up to 0
-        int N = arr.length;
-        int count = 0;
-        for (int i = 0; i < N; i++)
-            for (int j = i+1; j < N; j++)
-                for (int k = j+1; k < N; k++)
-                    // if they sum to 0, add to the count
-                    if (arr[i] + arr[j] + arr[k] == 0)
-                        count++;
-        return count;
-    }
-
-    private static int ThreeSumFaster(long arr[]) {
-        int N = arr.length;
-        int count = 0;
-        // sort the array so it can be used for binary search later
-        Arrays.sort(arr); // ~ nlogn
-        /*
-         iterate over the list twice, and binary search for the complement of the sum
-         generated from adding nums when they are less than 0 from the first 2 iterations
-        */
-        for (int i = 0; i < N && arr[i] < 0; i++) {
-            for (int j = i + 1; j < N && arr[i] + arr[j] < 0; j++) {
-                // if complement of sum is found, add to count of 3sums, only search from current loc in array on up
-                int k = Arrays.binarySearch(arr, j+1, N, -arr[i] - arr[j]);
-                if (k > j) {
-                    count++;
+    private static void bubbleSort(long[] list) {
+        for (int i = 0; i < list.length; i++) {
+            for (int j = 0; j < list.length - 1; j++) {
+                if (list[j] > list[j+1]) {
+                    long tmp = list[j];
+                    list[j] = list[j+1];
+                    list[j+1] = tmp;
                 }
             }
         }
-        return count;
     }
 
-    private static int ThreeSumFastest(long arr[]) {
-        int N = arr.length;
-        int count = 0;
-        // add a hash map to check against rather than a third iteration
-        HashMap<Long, long[]> hashMap = new HashMap<Long, long[]>();
-        // sort the list so we can remove duplicates and easily hash
-        Arrays.sort(arr);
+    private static void verifyBubbleSort() {
+        long[] testList1 = {14, 42, 1, 5, 2, 19, 12, 4};
+        long[] testList2 = {98, 13, 77, 79, 84, 107, 33, 26, 52, 44};
 
-        // iterate over the array twice and check for complement in a hash map
-        for (int i = 0; i < N - 2 && arr[i] < 0; i++) {
-            // empty the hashMap for the next iteration through the list
-            hashMap.clear();
+        System.out.println("Bubble Sort Presorted ----------------");
+        printArray(testList1);
+        printArray(testList2);
 
-            // check the map if i = 0 or if i's value is greater than prv i value
-            if (i == 0 || arr[i] > arr[i - 1]) {
-                for (int j = i + 1; j < N; j++) {
-                    // if the complement of the 2Sum is found in the hashMap add to count
-                    if (hashMap.containsKey(arr[j])) {
-                        count++;
+        bubbleSort(testList1);
+        bubbleSort(testList2);
 
-                        // remove the duplicates from the array that were used
-                        while (j < (N - 1) && arr[j] == arr[j + 1]) j++;
-                    } else {
-                        // create temp arr to insert into hashmap to check against
-                        long[] tempArr = new long[2];
-                        tempArr[0] = arr[i];
-                        tempArr[1] = arr[j];
-                        // insert the values to check against
-                        hashMap.put(0 - (arr[i] + arr[j]), tempArr);
-                    }
-                }
-            }
+        System.out.println("Bubble Sort After Sort ----------------");
+        printArray(testList1);
+        printArray(testList2);
+
+        if (verifySorted(testList1) && verifySorted(testList2)) {
+            System.out.println("Bubble Sort lists verified sorted!!!!");
+        } else {
+            System.out.println("Bubble Sort lists NOT SORTED!!!!!");
         }
 
-        return count;
+    }
+
+
+    private static void insertionSort(long[] list) {
+        int n = list.length;
+        for (int i = 1; i < n; ++i) {
+            long key = list[i];
+            int j = i - 1;
+
+            /* Move elements of arr[0..i-1], that are
+               greater than key, to one position ahead
+               of their current position */
+            while (j >= 0 && list[j] > key) {
+                list[j + 1] = list[j];
+                j = j - 1;
+            }
+            list[j + 1] = key;
+        }
+    }
+
+    private static void verifyInsertionSort() {
+        long[] testList1 = {14, 42, 1, 5, 2, 19, 12, 4};
+        long[] testList2 = {98, 13, 77, 79, 84, 107, 33, 26, 52, 44};
+
+        System.out.println("Insertion Sort Presorted ----------------");
+        printArray(testList1);
+        printArray(testList2);
+
+        insertionSort(testList1);
+        insertionSort(testList2);
+
+        System.out.println("Insertion Sort After Sort ----------------");
+        printArray(testList1);
+        printArray(testList2);
+
+        if (verifySorted(testList1) && verifySorted(testList2)) {
+            System.out.println("Insertion Sort lists verified sorted!!!!");
+        } else {
+            System.out.println("Insertion Sort lists NOT SORTED!!!!!");
+        }
+
     }
 
     /* UTILITY FUNCTIONS */
