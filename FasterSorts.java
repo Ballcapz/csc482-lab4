@@ -18,6 +18,8 @@ public class FasterSorts {
     private static int MININPUTSIZE  =  1;
     private static int SIZEINCREMENT = 2;
 
+    static Random rand = new Random();
+
     // static int SIZEINCREMENT =  10000000; // not using this since we are doubling the size each time
     private static String ResultsFolderPath = "/home/zach/Results/lab4/"; // pathname to results folder
     private static FileWriter resultsFile;
@@ -27,6 +29,8 @@ public class FasterSorts {
 
     public static void main(String args[])
     {
+        verifyQuickSort();
+        verifySlowQuickSort();
         verifyMergeSort();
 //        runFullExperiment("BubbleSort-1-TRASH.txt");
         //      runFullExperiment("BubbleSort-2.txt");
@@ -148,7 +152,7 @@ public class FasterSorts {
         }
     }
 
-    
+
     static void verifyMergeSort() {
 
         long[] testList1 = createRandomIntegerList(10);
@@ -246,6 +250,116 @@ public class FasterSorts {
     private  static void mergeSortRunner(long arr[]) {
         sort(arr, 0, arr.length-1);
     }
+
+
+
+    private static void verifySlowQuickSort(){
+        long[] testList1 = createRandomIntegerList(10);
+        long[] testList2 = createRandomIntegerList(10);
+
+        slowQuickSort(testList1);
+        slowQuickSort(testList2);
+
+
+        if (verifySorted(testList1) && verifySorted(testList2)) {
+            System.out.println("Slow Quick sort results verified correct!!!");
+        } else {
+            System.out.println("Slow Quick sort results NOT correct...");
+        }
+    }
+
+    private static void slowQuickSort(long arr[]) {
+        slowQuickSortWorker(arr, 0, arr.length -1);
+    }
+
+    private static void slowQuickSortWorker(long arr[], int lo, int hi) {
+        if (lo < hi) {
+            long pivot = arr[lo];
+            int i = lo;
+            int j = hi;
+
+            while (i < j) {
+                i+=1;
+
+                while (i <= hi && arr[i] < pivot) {
+                    i += 1;
+                }
+                while (j >= lo && arr[j] > pivot) {
+                    j -= 1;
+                }
+                if (i <= hi && i < j) {
+                    // swap
+                    long tmp = arr[i];
+                    arr[i] = arr[j];
+                    arr[j] = tmp;
+                }
+            }
+            // swap
+            long tmp = arr[lo];
+            arr[lo] = arr[j];
+            arr[j] = tmp;
+
+            slowQuickSortWorker(arr, lo, j-1);
+            slowQuickSortWorker(arr, j+1, hi);
+        }
+    }
+
+
+
+
+    private static void verifyQuickSort() {
+        long[] testList1 = createRandomIntegerList(10);
+        long[] testList2 = createRandomIntegerList(10);
+
+        quickSort(testList1);
+        quickSort(testList2);
+
+
+        if (verifySorted(testList1) && verifySorted(testList2)) {
+            System.out.println("Quick sort results verified correct!!!");
+        } else {
+            System.out.println("Quick sort results NOT correct...");
+        }
+    }
+
+    private static void quickSort(long arr[]) {
+        quickSortWorker(arr, 0, arr.length-1);
+    }
+
+    private static void quickSortWorker(long arr[], int lo, int hi) {
+        int pivotIndex = partition(arr, lo, hi);
+        if (lo < pivotIndex -1)
+            quickSortWorker(arr, lo, pivotIndex - 1);
+        if (pivotIndex < hi)
+            quickSortWorker(arr, pivotIndex, hi);
+    }
+
+    public static int partition(long arr[], int lo, int hi) {
+        int i = lo, j = hi;
+        long tmp;
+
+        long pivot = arr[lo + rand.nextInt(hi - lo)];
+
+        while (i <= j) {
+            while (arr[i] < pivot)
+                i++;
+            while (arr[j] > pivot)
+                j--;
+            if (i <= j) {
+                tmp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = tmp;
+                i++;
+                j--;
+            }
+        };
+
+        return i;
+    }
+
+
+
+
 
 
     /* UTILITY FUNCTIONS */
