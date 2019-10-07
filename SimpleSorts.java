@@ -14,7 +14,7 @@ public class SimpleSorts {
     static long MAXVALUE =  2000000000;
     static long MINVALUE = -2000000000;
     private static int numberOfTrials = 1;
-    private static int MAXINPUTSIZE  = (int) Math.pow(2, 16);
+    private static int MAXINPUTSIZE  = (int) Math.pow(2, 21);
     private static int MININPUTSIZE  =  1;
     private static int SIZEINCREMENT = 2;
 
@@ -27,12 +27,10 @@ public class SimpleSorts {
 
     public static void main(String args[])
     {
-
-        verifyBubbleSort();
-        verifyInsertionSort();
-//        runFullExperiment("BubbleSort-1-TRASH.txt");
-  //      runFullExperiment("BubbleSort-2.txt");
-    //    runFullExperiment("BubbleSort-3.txt");
+//        checkSortCorrectness();
+        runFullExperiment("InsertionSort-1-TRASH.txt");
+        runFullExperiment("InsertionSort-2.txt");
+        runFullExperiment("InsertionSort-3.txt");
     }
 
     private static boolean verifySorted(long[] list) {
@@ -48,6 +46,32 @@ public class SimpleSorts {
         // no unsorted pair found
         return true;
     }
+
+    private static void checkSortCorrectness() {
+        long[] testList1 = createRandomIntegerList(100);
+        long[] testList2 = createRandomIntegerList(100);
+
+        long[] testShortList = {17, 5, 3, 8, 2, 11};
+        long[] testShortList2 = {12, 5, 3, 8, 42, 71, 26, 2, 11};
+
+        printArray(testShortList);
+        printArray(testShortList2);
+
+        insertionSort(testList1);
+        insertionSort(testList2);
+        insertionSort(testShortList);
+        insertionSort(testShortList2);
+
+        printArray(testShortList);
+        printArray(testShortList2);
+
+        if (verifySorted(testList1) && verifySorted(testList2)) {
+            System.out.println("sort results verified!!!");
+        } else {
+            System.out.println("sort results NOT correct...");
+        }
+    }
+
 
     private static void runFullExperiment(String resultsFileName) {
         try {
@@ -119,7 +143,7 @@ public class SimpleSorts {
                 /////////////////////////////////////////
 
 
-                bubbleSort(testList);
+                insertionSort(testList);
 
 
                 ///////////////////////////////////////////

@@ -1,11 +1,15 @@
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.lang.invoke.MethodType;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.function.Function;
 
 public class FasterSorts {
     static ThreadMXBean bean = ManagementFactory.getThreadMXBean( );
@@ -14,7 +18,7 @@ public class FasterSorts {
     static long MAXVALUE =  2000000000;
     static long MINVALUE = -2000000000;
     private static int numberOfTrials = 1;
-    private static int MAXINPUTSIZE  = (int) Math.pow(2, 16);
+    private static int MAXINPUTSIZE  = (int) Math.pow(2, 26);
     private static int MININPUTSIZE  =  1;
     private static int SIZEINCREMENT = 2;
 
@@ -29,12 +33,10 @@ public class FasterSorts {
 
     public static void main(String args[])
     {
-        verifyQuickSort();
-        verifySlowQuickSort();
-        verifyMergeSort();
-//        runFullExperiment("BubbleSort-1-TRASH.txt");
-        //      runFullExperiment("BubbleSort-2.txt");
-        //    runFullExperiment("BubbleSort-3.txt");
+//        checkSortCorrectness();
+        runFullExperiment("QuickSort-1-TRASH.txt");
+        runFullExperiment("QuickSort-2.txt");
+        runFullExperiment("QuickSort-3.txt");
     }
 
     private static boolean verifySorted(long[] list) {
@@ -49,6 +51,32 @@ public class FasterSorts {
         }
         // no unsorted pair found
         return true;
+    }
+
+
+    private static void checkSortCorrectness() {
+        long[] testList1 = createRandomIntegerList(100);
+        long[] testList2 = createRandomIntegerList(100);
+
+        long[] testShortList = {17, 5, 3, 8, 2, 11};
+        long[] testShortList2 = {12, 5, 3, 8, 42, 71, 26, 2, 11};
+
+        printArray(testShortList);
+        printArray(testShortList2);
+
+        quickSort(testList1);
+        quickSort(testList2);
+        quickSort(testShortList);
+        quickSort(testShortList2);
+
+        printArray(testShortList);
+        printArray(testShortList2);
+
+        if (verifySorted(testList1) && verifySorted(testList2)) {
+            System.out.println("sort results verified!!!");
+        } else {
+            System.out.println("sort results NOT correct...");
+        }
     }
 
     private static void runFullExperiment(String resultsFileName) {
@@ -121,7 +149,7 @@ public class FasterSorts {
                 /////////////////////////////////////////
 
 
-                mergeSortRunner(testList);
+                quickSort(testList);
 
 
                 ///////////////////////////////////////////
@@ -337,8 +365,12 @@ public class FasterSorts {
     public static int partition(long arr[], int lo, int hi) {
         int i = lo, j = hi;
         long tmp;
-
-        long pivot = arr[lo + rand.nextInt(hi - lo)];
+        long pivot;
+        if ((hi - lo) < 1) {
+            pivot = arr[hi];
+        } else {
+            pivot = arr[lo + rand.nextInt(hi - lo)];
+        }
 
         while (i <= j) {
             while (arr[i] < pivot)

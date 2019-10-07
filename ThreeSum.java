@@ -6,7 +6,83 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 public class ThreeSum {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     static ThreadMXBean bean = ManagementFactory.getThreadMXBean( );
 
     /* define constants */
